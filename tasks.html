@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Topshiriqlar - Family Regulation App</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="page">
+        <h2>Topshiriqlar (Tasks Section)</h2>
+        <div id="content"></div>
+        <div id="taskList"></div>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            checkAccess("Umidjon", "Iroda", "Bolakay");
+            const role = localStorage.getItem("Role");
+            const content = document.getElementById("content");
+
+            if (role === "Umidjon" || role === "Iroda") {
+                // Allow adding tasks for parents
+                content.innerHTML = `
+                    <h3>Add a Task</h3>
+                    <input type="text" id="taskName" placeholder="Task Name" />
+                    <button onclick="addTask()">Add Task</button>
+                `;
+            } else {
+                // "Bolakay" can complete tasks
+                content.innerHTML = "<p>Mark tasks as completed below:</p>";
+            }
+            displayTasks();
+        });
+
+        function addTask() {
+            const taskName = document.getElementById("taskName").value;
+            if (taskName) {
+                let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+                tasks.push(taskName);
+                localStorage.setItem("tasks", JSON.stringify(tasks));
+                displayTasks();
+            }
+        }
+
+        function displayTasks() {
+            const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            const taskList = document.getElementById("taskList");
+            taskList.innerHTML = tasks.map((task, index) => 
+                `<p>${task} ${
+                    localStorage.getItem("Role") === "Bolakay" ? `<button onclick="removeTask(${index})">Complete</button>` : ""
+                }</p>`
+            ).join("");
+        }
+
+        function removeTask(index) {
+            let tasks = JSON.parse(localStorage.getItem("tasks"));
+            tasks.splice(index, 1);
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+            displayTasks();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kerakli Maxsulotlar - Family Regulation App</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="page">
+        <h2>Kerakli Maxsulotlar (Product Section)</h2>
+        <div id="content"></div>
+        <div id="productList"></div>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            checkAccess("Iroda", "Umidjon");
+            const role = localStorage.getItem("Role");
+            const content = document.getElementById("content");
+
+            if (role === "Iroda") {
+                // Allow adding products for "Iroda"
+                content.innerHTML = `
+                    <h3>Add a Product</h3>
+                    <input type="text" id="productName" placeholder="Product Name" />
+                    <button onclick="addProduct()">Add Product</button>
+                `;
+            } else {
+                // "Umidjon" can only view products
+                content.innerHTML = "<p>You can view the products below:</p>";
+            }
+            displayProducts();
+        });
+
+        function addProduct() {
+            const productName = document.getElementById("productName").value;
+            if (productName) {
+                let products = JSON.parse(localStorage.getItem("products")) || [];
+                products.push(productName);
+                localStorage.setItem("products", JSON.stringify(products));
+                displayProducts();
+            }
+        }
+
+        function displayProducts() {
+            const products = JSON.parse(localStorage.getItem("products")) || [];
+            const productList = document.getElementById("productList");
+            productList.innerHTML = products.map((product) => `<p>${product}</p>`).join("");
+        }
+    </script>
+</body>
+</html>

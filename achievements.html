@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yutuqlar - Family Regulation App</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="page">
+        <h2>Yutuqlar (Achievements Section)</h2>
+        <div id="content"></div>
+        <div id="achievementList"></div>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            checkAccess("Umidjon", "Iroda", "Bolakay");
+            const role = localStorage.getItem("Role");
+            const content = document.getElementById("content");
+
+            if (role === "Bolakay") {
+                content.innerHTML = `
+                    <h3>Add an Achievement</h3>
+                    <input type="text" id="achievementName" placeholder="Achievement Name" />
+                    <input type="date" id="achievementDate" placeholder="Date" />
+                    <input type="text" id="achievementDescription" placeholder="Description" />
+                    <button onclick="addAchievement()">Add Achievement</button>
+                `;
+            } else {
+                content.innerHTML = "<p>You can view the achievements below:</p>";
+            }
+            displayAchievements();
+        });
+
+        function addAchievement() {
+            const name = document.getElementById("achievementName").value;
+            const date = document.getElementById("achievementDate").value;
+            const description = document.getElementById("achievementDescription").value;
+            if (name && date && description) {
+                let achievements = JSON.parse(localStorage.getItem("achievements")) || [];
+                achievements.push({ name, date, description });
+                localStorage.setItem("achievements", JSON.stringify(achievements));
+                displayAchievements();
+            }
+        }
+
+        function displayAchievements() {
+            const achievements = JSON.parse(localStorage.getItem("achievements")) || [];
+            const achievementList = document.getElementById("achievementList");
+            achievementList.innerHTML = achievements.map(ach => `<p>${ach.name} (${ach.date}) - ${ach.description}</p>`).join("");
+        }
+    </script>
+</body>
+</html>

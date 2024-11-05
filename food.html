@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kechgi Ovqat - Family Regulation App</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="page">
+        <h2>Kechgi Ovqat (Food Section)</h2>
+        <div id="content"></div>
+        <div id="mealList"></div>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            checkAccess("Umidjon", "Iroda", "Bolakay");
+            const role = localStorage.getItem("Role");
+            const content = document.getElementById("content");
+
+            if (role === "Umidjon" || role === "Iroda") {
+                // Allow adding meals for "Umidjon" and "Iroda"
+                content.innerHTML = `
+                    <h3>Add a Meal</h3>
+                    <input type="text" id="mealName" placeholder="Meal Name" />
+                    <button onclick="addMeal()">Add Meal</button>
+                `;
+            } else {
+                // "Bolakay" can only view meals
+                content.innerHTML = "<p>You can view the meals below:</p>";
+            }
+            displayMeals();
+        });
+
+        function addMeal() {
+            const mealName = document.getElementById("mealName").value;
+            if (mealName) {
+                let meals = JSON.parse(localStorage.getItem("meals")) || [];
+                meals.push(mealName);
+                localStorage.setItem("meals", JSON.stringify(meals));
+                displayMeals();
+            }
+        }
+
+        function displayMeals() {
+            const meals = JSON.parse(localStorage.getItem("meals")) || [];
+            const mealList = document.getElementById("mealList");
+            mealList.innerHTML = meals.map((meal) => `<p>${meal}</p>`).join("");
+        }
+    </script>
+</body>
+</html>
